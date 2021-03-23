@@ -32,6 +32,7 @@ import (
 	"github.com/arthurbailao/aoc/2020/day05"
 	"github.com/arthurbailao/aoc/2020/day06"
 	"github.com/arthurbailao/aoc/2020/day07"
+	"github.com/arthurbailao/aoc/2020/day08"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
@@ -55,6 +56,7 @@ var solutions = map[string]func(io.Reader) y2020.Solver{
 	"day05": func(input io.Reader) y2020.Solver { return day05.New(input) },
 	"day06": func(input io.Reader) y2020.Solver { return day06.New(input) },
 	"day07": func(input io.Reader) y2020.Solver { return day07.New(input) },
+	"day08": func(input io.Reader) y2020.Solver { return day08.New(input) },
 }
 
 func init() {
