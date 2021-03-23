@@ -28,7 +28,10 @@ var rootCmd = &cobra.Command{
 	Use:   "aoc",
 	Short: "",
 	Long: `aoc stands for Advent of Code, an Advent calendar of small programming puzzles. 
-This CLI was built to organize my Golang solves and to help running each of them.`,
+This CLI was built to organize my Golang solves and to help running each of them.
+
+For example, 'aoc 2020 day07 input.txt' will solve 
+the 7th day problem of the year 2020.`,
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
