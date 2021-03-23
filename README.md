@@ -1,3 +1,5 @@
+![Build and Test](https://github.com/arthurbailao/aoc-go/actions/workflows/go.yml/badge.svg)
+
 # aoc-go
 My Advent of Code solutions using Golang
 
