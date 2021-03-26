@@ -3,9 +3,12 @@ package day08
 import (
 	"bufio"
 	"errors"
+	"fmt"
 	"io"
 	"strconv"
 	"strings"
+
+	"github.com/arthurbailao/aoc/2020/stack"
 )
 
 type instruction struct {
@@ -17,6 +20,7 @@ type program struct {
 	Instructions []instruction
 	Acc          int
 	Cmds         []int
+	Stack        *stack.Stack
 }
 
 // Solution solves day01 problems
@@ -31,11 +35,7 @@ func New(input io.Reader) Solution {
 
 // SolveFirst solves the first problem
 func (s Solution) SolveFirst() (int, error) {
-	prog := program{
-		Instructions: s.Instructions,
-		Acc:          0,
-		Cmds:         make([]int, len(s.Instructions)),
-	}
+	prog := newProgram(s.Instructions)
 
 	err := prog.Run()
 
@@ -47,12 +47,40 @@ func (s Solution) SolveFirst() (int, error) {
 		return prog.Acc, nil
 	}
 
-	return -1, errors.New("unknown error")
+	return -1, err
 }
 
 // SolveSecond solves the second problem
 func (s Solution) SolveSecond() (int, error) {
-	return -1, errors.New("not implemented")
+	fixMap := map[string]string{
+		"jmp": "nop",
+		"nop": "jmp",
+		"acc": "acc",
+	}
+
+	var testingInstructions []int
+	for i, inst := range s.Instructions {
+		if inst.Cmd != "acc" {
+			testingInstructions = append(testingInstructions, i)
+		}
+	}
+
+	for _, i := range testingInstructions {
+		modified := make([]instruction, len(s.Instructions))
+		copy(modified, s.Instructions)
+
+		modified[i].Cmd = fixMap[modified[i].Cmd]
+
+		prog := newProgram(modified)
+		err := prog.Run()
+
+		if err == nil {
+			return prog.Acc, nil
+		}
+	}
+
+	return -1, errors.New("could not fix the program")
+
 }
 
 func parse(input io.Reader) []instruction {
@@ -71,25 +99,43 @@ func parse(input io.Reader) []instruction {
 	return program
 }
 
+func newProgram(instructions []instruction) program {
+	prog := program{
+		Instructions: instructions,
+		Acc:          0,
+		Cmds:         make([]int, len(instructions)),
+		Stack:        stack.New(),
+	}
+
+	prog.Stack.Push(0)
+	return prog
+}
+
 func (p *program) Run() error {
-	var i int
 	for {
-		if p.Cmds[i] == 1 {
+		pos := p.Stack.Peek().(int)
+		if p.Cmds[pos] == 1 {
 			return errors.New("ininite loop")
 		}
-		p.Cmds[i]++
+		p.Cmds[pos]++
 
-		switch current := p.Instructions[i]; current.Cmd {
+		inc := 1
+
+		switch current := p.Instructions[pos]; current.Cmd {
 		case "nop":
-			i++
 		case "acc":
 			p.Acc = p.Acc + current.Val
-			i++
 		case "jmp":
-			i = i + current.Val
+			inc = current.Val
 		default:
-			return errors.New("cmd does not exists")
+			return fmt.Errorf("cmd `%s` does not exists", current.Cmd)
 		}
+
+		if pos+inc == len(p.Instructions) {
+			break
+		}
+
+		p.Stack.Push(pos + inc)
 	}
 	return nil
 }

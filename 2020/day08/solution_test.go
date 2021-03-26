@@ -32,6 +32,6 @@ func TestSolveSecond(t *testing.T) {
 	actual, err := solution.SolveSecond()
 
 	if assert.NoError(t, err) {
-		assert.Equal(t, 6, actual, "they should be equal")
+		assert.Equal(t, 8, actual, "they should be equal")
 	}
 }
